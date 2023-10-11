@@ -1,12 +1,13 @@
 package ai;
 
 import ai.math.Backpropagation;
+import ai.math.Error;
 
-public class ArtificialIntelligence {
+public class NeuralNetwork {
 
     private int[] layers;
 
-    private final Neuron[][] neuralNetwork;
+    private final Neuron[][] neurons;
 
     private int[] expectedResult;
 
@@ -16,9 +17,9 @@ public class ArtificialIntelligence {
 
     private final double momentum;
 
-    public ArtificialIntelligence(int[] layers, int epochs, double learningRate, double momentum) {
+    public NeuralNetwork(int[] layers, int epochs, double learningRate, double momentum) {
         this.layers = layers;
-        this.neuralNetwork = new Neuron[layers.length][];
+        this.neurons = new Neuron[layers.length][];
         this.expectedResult = new int[layers[layers.length - 1]];
         this.epochs = epochs;
         this.learningRate = learningRate;
@@ -32,42 +33,43 @@ public class ArtificialIntelligence {
         }
 
         neuronsInit();
-        System.out.println("Error = " + getError() + "%");
-        backpropagate();
+        System.out.println("Error = " + calculateError() + "%");
+        startBackpropagation();
     }
 
     public void neuronsInit() {
         for (int i = 0; i < layers.length; i++) {
-            neuralNetwork[i] = new Neuron[layers[i]];
+            neurons[i] = new Neuron[layers[i]];
         }
         initializingTheInputLayer();
         initializingHiddenAndOutputLayers();
     }
 
     private void initializingTheInputLayer() {
+//      HARDCODE
         double[] outputSynapsesWeights = null;
-        if (neuralNetwork.length > 1) {
-            outputSynapsesWeights = new double[neuralNetwork[1].length];
-            for (int i = 0; i < neuralNetwork[1].length; i++) {
+        if (neurons.length > 1) {
+            outputSynapsesWeights = new double[neurons[1].length];
+            for (int i = 0; i < neurons[1].length; i++) {
                 outputSynapsesWeights[i] = Math.random();
             }
         }
         Neuron neuron1 = new Neuron(0, outputSynapsesWeights);
         neuron1.setOutputData(0.8);
-        neuralNetwork[0][0] = neuron1;
+        neurons[0][0] = neuron1;
         Neuron neuron2 = new Neuron(0, outputSynapsesWeights);
         neuron2.setOutputData(0.4);
-        neuralNetwork[0][1] = neuron2;
+        neurons[0][1] = neuron2;
         Neuron neuron3 = new Neuron(0, outputSynapsesWeights);
         neuron3.setOutputData(-0.9);
-        neuralNetwork[0][2] = neuron3;
+        neurons[0][2] = neuron3;
     }
 
     private void initializingHiddenAndOutputLayers() {
-        for (int i = 1; i < neuralNetwork.length; i++) {
-            for (int j = 0; j < neuralNetwork[i].length; j++) {
+        for (int i = 1; i < neurons.length; i++) {
+            for (int j = 0; j < neurons[i].length; j++) {
 
-                Neuron[] previousLayer = neuralNetwork[i - 1];
+                Neuron[] previousLayer = neurons[i - 1];
 
                 double weightedOutputData = 0;
 
@@ -78,7 +80,7 @@ public class ArtificialIntelligence {
 
                 double[] outputSynapsesWeights = null;
                 if (i < layers.length - 1) {
-                    outputSynapsesWeights = new double[neuralNetwork[i + 1].length];
+                    outputSynapsesWeights = new double[neurons[i + 1].length];
 
                     for (int k = 0; k < outputSynapsesWeights.length; k++) {
                         double weight = Math.random() * 5;
@@ -88,30 +90,29 @@ public class ArtificialIntelligence {
                         outputSynapsesWeights[k] = weight;
                     }
                 }
-                neuralNetwork[i][j] = new Neuron(weightedOutputData, outputSynapsesWeights);
+                neurons[i][j] = new Neuron(weightedOutputData, outputSynapsesWeights);
             }
         }
     }
 
-    private double[] getOutputNeuronsOutputData() {
-        double[] outputData = new double[neuralNetwork[neuralNetwork.length - 1].length];
-        for (int i = 0; i < outputData.length; i++) {
-            outputData[i] = neuralNetwork[neuralNetwork.length - 1][i].getOutputData();
-        }
-        return outputData;
-    }
-
-    private int getError() {
+    private int calculateError() {
         expectedResult[0] = 1;
-        double error = Backpropagation.calculateError(neuralNetwork[neuralNetwork.length - 1], expectedResult);
+        double error = Error.find(neurons[neurons.length - 1], expectedResult);
         return (int) (error * 100);
     }
 
-    private void backpropagate() {
-        backpropagateOutpotNeuron();
+    private void startBackpropagation() {
+        calculateOutputNeuronsBackpropagation();
+        calculateBackpropagation();
     }
 
-    private void backpropagateOutpotNeuron() {
+    private void calculateOutputNeuronsBackpropagation() {
+        Backpropagation.setOutputNeuronsDeltaWithHyperbolicTangent(neurons[neurons.length - 1], expectedResult);
+    }
 
+    private void calculateBackpropagation() {
+        for (int i = neurons.length - 2; i >= 0; i--) {
+            Backpropagation.setDeltaWithHyperbolicTangent(neurons[i], neurons[i + 1]);
+        }
     }
 }

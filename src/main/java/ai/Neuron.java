@@ -1,6 +1,6 @@
 package ai;
 
-import ai.math.ActivationFunction;
+import ai.math.NeuronActivationFunction;
 
 public class Neuron {
 
@@ -8,8 +8,12 @@ public class Neuron {
 
     private double[] outputSynapsesWeights;
 
+    private double delta;
+
+    private double[] outputSynapsesGradients;
+
     public Neuron(double inputData, double[] outputSynapsesWeights) {
-        this.outputData = ActivationFunction.hyperbolicTangent(inputData);
+        this.outputData = NeuronActivationFunction.findHyperbolicTangent(inputData);
         this.outputSynapsesWeights = outputSynapsesWeights;
     }
 
@@ -27,5 +31,21 @@ public class Neuron {
 
     public void setOutputSynapsesWeights(double[] outputSynapsesWeights) {
         this.outputSynapsesWeights = outputSynapsesWeights;
+    }
+
+    public double getDelta() {
+        return delta;
+    }
+
+    public void setDelta(double delta) {
+        this.delta = delta;
+    }
+
+    public double[] getOutputSynapsesGradients() {
+        return outputSynapsesGradients;
+    }
+
+    public void setOutputSynapsesGradients(double[] outputSynapsesGradients) {
+        this.outputSynapsesGradients = outputSynapsesGradients;
     }
 }

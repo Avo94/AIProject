@@ -1,4 +1,4 @@
-import ai.ArtificialIntelligence;
+import ai.NeuralNetwork;
 
 public class Main {
 
@@ -8,7 +8,7 @@ public class Main {
         double learningRate = 0.03;             //weight correction factor
         double momentum = 0.3;              //local minimum avoidance factor
 
-        ArtificialIntelligence AI = new ArtificialIntelligence(layers, epochs, learningRate, momentum);
+        NeuralNetwork AI = new NeuralNetwork(layers, epochs, learningRate, momentum);
         AI.run();
     }
 }
