@@ -1,13 +1,13 @@
 package ai;
 
-import ai.math.Backpropagation;
+import ai.math.*;
 import ai.math.Error;
 
 public class NeuralNetwork {
 
-    private int[] layers;
+    private final int[] layers;
 
-    private final Neuron[][] neurons;
+    private Neuron[][] neurons;
 
     private int[] expectedResult;
 
@@ -19,8 +19,10 @@ public class NeuralNetwork {
 
     public NeuralNetwork(int[] layers, int epochs, double learningRate, double momentum) {
         this.layers = layers;
-        this.neurons = new Neuron[layers.length][];
-        this.expectedResult = new int[layers[layers.length - 1]];
+        if (layers != null) {
+            this.neurons = new Neuron[layers.length][];
+            this.expectedResult = new int[layers[layers.length - 1]];
+        }
         this.epochs = epochs;
         this.learningRate = learningRate;
         this.momentum = momentum;
@@ -31,13 +33,18 @@ public class NeuralNetwork {
             System.out.println("Incorrect layer architecture");
             System.exit(1);
         }
+        neuronsInitialization();
 
-        neuronsInit();
-        System.out.println("Error = " + calculateError() + "%");
-        startBackpropagation();
+        for (int i = 0; i < epochs; i++) {
+            System.out.println("Epoch " + i + ", error = " + calculateError() + "%");
+            runBackpropagation();
+            calculateGradient();
+            correctSynapsesWeights();
+            runNewIteration();
+        }
     }
 
-    public void neuronsInit() {
+    public void neuronsInitialization() {
         for (int i = 0; i < layers.length; i++) {
             neurons[i] = new Neuron[layers[i]];
         }
@@ -101,7 +108,7 @@ public class NeuralNetwork {
         return (int) (error * 100);
     }
 
-    private void startBackpropagation() {
+    private void runBackpropagation() {
         calculateOutputNeuronsBackpropagation();
         calculateBackpropagation();
     }
@@ -113,6 +120,24 @@ public class NeuralNetwork {
     private void calculateBackpropagation() {
         for (int i = neurons.length - 2; i >= 0; i--) {
             Backpropagation.setDeltaWithHyperbolicTangent(neurons[i], neurons[i + 1]);
+        }
+    }
+
+    private void calculateGradient() {
+        for (int i = neurons.length - 2; i >= 0; i--) {
+            Gradient.find(neurons[i], neurons[i + 1]);
+        }
+    }
+
+    private void correctSynapsesWeights() {
+        for (int i = neurons.length - 2; i >= 0; i--) {
+            SynapseWeight.correct(neurons[i], neurons[i + 1], learningRate, momentum);
+        }
+    }
+
+    private void runNewIteration() {
+        for (int i = 1; i < neurons.length; i++) {
+            Iteration.run(neurons[i - 1], neurons[i]);
         }
     }
 }

@@ -12,9 +12,15 @@ public class Neuron {
 
     private double[] outputSynapsesGradients;
 
+    private double synapseWeightCorrection;
+
     public Neuron(double inputData, double[] outputSynapsesWeights) {
         this.outputData = NeuronActivationFunction.findHyperbolicTangent(inputData);
         this.outputSynapsesWeights = outputSynapsesWeights;
+        if (outputSynapsesWeights != null) {
+            this.outputSynapsesGradients = new double[outputSynapsesWeights.length];
+        }
+        this.synapseWeightCorrection = 0;
     }
 
     public double getOutputData() {
@@ -47,5 +53,13 @@ public class Neuron {
 
     public void setOutputSynapsesGradients(double[] outputSynapsesGradients) {
         this.outputSynapsesGradients = outputSynapsesGradients;
+    }
+
+    public double getSynapseWeightCorrection() {
+        return synapseWeightCorrection;
+    }
+
+    public void setSynapseWeightCorrection(double synapseWeightCorrection) {
+        this.synapseWeightCorrection = synapseWeightCorrection;
     }
 }
