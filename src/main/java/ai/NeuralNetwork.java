@@ -9,7 +9,7 @@ public class NeuralNetwork {
 
     private Neuron[][] neurons;
 
-    private int[] expectedResult;
+    private double[] expectedResult;
 
     private final int epochs;
 
@@ -21,7 +21,7 @@ public class NeuralNetwork {
         this.layers = layers;
         if (layers != null) {
             this.neurons = new Neuron[layers.length][];
-            this.expectedResult = new int[layers[layers.length - 1]];
+            this.expectedResult = new double[layers[layers.length - 1]];
         }
         this.epochs = epochs;
         this.learningRate = learningRate;
@@ -62,14 +62,15 @@ public class NeuralNetwork {
             }
         }
         Neuron neuron1 = new Neuron(0, outputSynapsesWeights);
-        neuron1.setOutputData(0.8);
+        neuron1.setOutputData(Math.random());
         neurons[0][0] = neuron1;
         Neuron neuron2 = new Neuron(0, outputSynapsesWeights);
-        neuron2.setOutputData(0.4);
+        neuron2.setOutputData(Math.random());
         neurons[0][1] = neuron2;
         Neuron neuron3 = new Neuron(0, outputSynapsesWeights);
-        neuron3.setOutputData(-0.9);
+        neuron3.setOutputData(Math.random() * -1);
         neurons[0][2] = neuron3;
+        expectedResult[0] = 0;
     }
 
     private void initializingHiddenAndOutputLayers() {
@@ -103,7 +104,6 @@ public class NeuralNetwork {
     }
 
     private int calculateError() {
-        expectedResult[0] = 1;
         double error = Error.find(neurons[neurons.length - 1], expectedResult);
         return (int) (error * 100);
     }

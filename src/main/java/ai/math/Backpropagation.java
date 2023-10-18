@@ -11,7 +11,7 @@ public class Backpropagation {
         outputLayer[0].setDelta((expectedResult[0] - outputData) * ((1 - outputData) * outputData));
     }
 
-    public static void setOutputNeuronsDeltaWithHyperbolicTangent(Neuron[] outputLayer, int[] expectedResult) {
+    public static void setOutputNeuronsDeltaWithHyperbolicTangent(Neuron[] outputLayer, double[] expectedResult) {
 //      HARDCODE
         double outputData = outputLayer[0].getOutputData();
 //      delta = (i - a) * (1 - a^2)

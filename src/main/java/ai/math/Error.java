@@ -4,7 +4,7 @@ import ai.Neuron;
 
 public class Error {
 
-    public static double find(Neuron[] outputLayer, int[] expectedResult) {
+    public static double find(Neuron[] outputLayer, double[] expectedResult) {
         double error = 0;
 //                 (i - a)^2 + ... + (i - a)^2         where: i - ideal output data
 //        Error = ----------------------------                a - actual output data
